@@ -5,7 +5,7 @@
 
 ## 知识地图
 1. [AI&bigdata](https://github.com/derek-yi/weblog/blob/master/vip_links/ai_bigdata.md)   
-2. [SDN](https://github.com/derek-yi/weblog/blob/master/vip_links/open_network.md)   
+2. [ALGO](https://github.com/derek-yi/weblog/blob/master/vip_links/algo.md)   
 3. [cloud&NFV](https://github.com/derek-yi/weblog/blob/master/vip_links/cloud_nfv.md)  
 4. [network](https://github.com/derek-yi/weblog/blob/master/vip_links/network.md)  
 
