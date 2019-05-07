@@ -1,5 +1,5 @@
 ## github 
-1. [git_hot](https://github.com/derek-yi/weblog/blob/master/vip_links/git_hot.md)  
+1. [git_hot](https://github.com/sindresorhus/awesome)  
 2. [network&SDN](https://github.com/derek-yi/weblog/blob/master/vip_links/git_net.md) 
 3. [python](https://github.com/derek-yi/weblog/blob/master/vip_links/git_python.md)  
 4. [linux&C](https://github.com/derek-yi/weblog/blob/master/vip_links/git_linux.md)  
