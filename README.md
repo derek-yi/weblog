@@ -11,8 +11,8 @@
 3. [cloud&NFV](https://github.com/derek-yi/weblog/blob/master/vip_links/cloud_nfv.md)  
 4. [network](https://github.com/derek-yi/weblog/blob/master/vip_links/network.md)  
 5. [embeded_system](https://github.com/derek-yi/weblog/blob/master/vip_links/embeded_sys.md)  
-6. [linux_admin](https://github.com/derek-yi/weblog/blob/master/linux_admin/linux_admin_index.md)  
-7. [arch_design](https://github.com/derek-yi/weblog/blob/master/arch/arch_index.md)  
+6. [linux_admin](https://github.com/derek-yi/weblog/blob/master/linux_admin/readme.md)  
+7. [arch_design](https://github.com/derek-yi/weblog/blob/master/arch/readme.md)  
 
 ## hot links
 1. [cnblogs](https://www.cnblogs.com/soul-stone/)  
