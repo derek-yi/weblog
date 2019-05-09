@@ -17,6 +17,8 @@
 ## hot links
 1. [cnblogs](https://www.cnblogs.com/soul-stone/)  
 2. [coolshell](https://coolshell.cn/)  
+3. [hexo](https://hexo.io/zh-cn/)  
+
 
 
 
