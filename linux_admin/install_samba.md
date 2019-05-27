@@ -28,7 +28,7 @@ create mask = 0664
 directory mask = 0775
 
 ## 添加账户和密码
-> sudo useradd smbuser
+> sudo useradd smbuser  
 要注意，上面只是增加了smbuser这个用户，却没有给用户赋予本机登录密码。  
 所以这个用户将只能从远程访问，不能从本机登录。而且samba的登录密码可以和本机登录密码不一样。
 
@@ -40,7 +40,7 @@ directory mask = 0775
 
 
 ## 重启samba
-> sudo /etc/init.d/samba restart
-或者：
+> sudo /etc/init.d/samba restart  
+或者： 
 > sudo service smbd restart
 
