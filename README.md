@@ -6,13 +6,11 @@
 5. [embeded_system](https://github.com/derek-yi/weblog/blob/master/vip_links/git_embeded.md)  
 
 ## knowledge map
-1. [AI&bigdata](https://github.com/derek-yi/weblog/blob/master/vip_links/ai_bigdata.md)   
-2. [ALGO](https://github.com/derek-yi/weblog/blob/master/vip_links/algo.md)   
-3. [cloud&NFV](https://github.com/derek-yi/weblog/blob/master/vip_links/cloud_nfv.md)  
-4. [network](https://github.com/derek-yi/weblog/blob/master/vip_links/network.md)  
-5. [embeded_system](https://github.com/derek-yi/weblog/blob/master/vip_links/embeded_sys.md)  
-6. [linux_admin](https://github.com/derek-yi/weblog/blob/master/linux_admin/readme.md)  
-7. [arch_design](https://github.com/derek-yi/weblog/blob/master/arch/README.md)  
+1. [ALGO](https://github.com/derek-yi/weblog/blob/master/alog/algo.md)   
+2. [ECU](https://github.com/derek-yi/weblog/blob/master/ecu/ecu_top.md)  
+3. [embeded_system](https://github.com/derek-yi/weblog/blob/master/embeded/embeded_sys.md)  
+4. [linux_admin](https://github.com/derek-yi/weblog/blob/master/linux_admin/readme.md)  
+5. [arch_design](https://github.com/derek-yi/weblog/blob/master/arch/README.md)  
 
 ## hot links
 1. [cnblogs](https://www.cnblogs.com/soul-stone/)  
