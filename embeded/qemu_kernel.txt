@@ -1,0 +1,71 @@
+## 安装工具
+sudo apt-get install gcc-arm-linux-gnueabi
+sudo apt-get install qemu
+
+## 下载Linux内核
+从kernel.org下载压缩包
+tar -xf linux-3.16.45.tar.xz
+
+## 编译内核
+make mrproper //可选，保证原始干净环境
+
+生成vexpress开发板子的config文件：
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm vexpress_defconfig
+
+编译：
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm
+
+生成的内核:
+位于arch/arm/boot/zImage， qemu启动时须要使用该镜像。
+ 
+
+## 测试qemu和内核是否能执行成功
+cp arch/arm/boot/zImage myImage
+qemu-system-arm -M vexpress-a9 -m 512M -kernel myImage -nographic -append "console=ttyAMA0"
+
+-M vexpress-a9 模拟vexpress-a9单板，你能够使用-M ?参数来获取该qemu版本号支持的全部单板
+-m 512M 单板执行物理内存512M
+-kernel /home/../zImage 告诉qemu单板执行内核镜像路径
+-nographic 不使用图形化界面，仅仅使用串口
+-append "console=ttyAMA0" 内核启动參数。这里告诉内核vexpress单板执串口设备是哪个tty。
+
+事实上在上面的測试中，你会发现内核报panic，由于内核找不到根文件系统，无法启init进程。
+
+ 
+## 下载、编译和安装busybox
+make defconfig
+make CROSS_COMPILE=arm-linux-gnueabi-
+make install CROSS_COMPILE=arm-linux-gnueabi-
+安装完毕后会在busybox文件夹下生成_install文件夹，该文件夹下的程序就是单板执行所须要的命令。
+
+## 准备根文件系统
+1. 创建rootfs文件夹（根文件夹），根文件系统内的文件全部放到这里
+sudo mkdir rootfs
+2. 拷贝busybox命令到根文件夹下
+sudo cp busybox-1.20.2/_install/* -r rootfs/
+3. 从工具链中拷贝执行库到lib文件夹下
+sudo mkdir rootfs/lib
+sudo mkdir rootfs/dev
+sudo cp -P /usr/arm-linux-gnueabi/lib/* rootfs/lib/
+4. 创建4个tty端终设备
+sudo mknod rootfs/dev/tty1 c 4 1
+sudo mknod rootfs/dev/tty2 c 4 2
+sudo mknod rootfs/dev/tty3 c 4 3
+sudo mknod rootfs/dev/tty4 c 4 4
+
+## 制作根文件系统镜像
+1. 生成32M大小的镜像
+dd if=/dev/zero of=a9rootfs.ext3 bs=1M count=32
+2. 格式化成ext3文件系统
+mkfs.ext3 a9rootfs.ext3
+3. 将文件复制到镜像中
+sudo mkdir tmpfs
+sudo mount -t ext3 a9rootfs.ext3 tmpfs/ -o loop
+sudo cp -r rootfs/* tmpfs/
+sudo umount tmpfs
+
+## 系统启动执行
+qemu-system-arm -M vexpress-a9 -m 512M -kernel myImage -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd a9rootfs.ext3
+
+
+
