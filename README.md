@@ -6,7 +6,7 @@
 5. [embeded_system](https://github.com/derek-yi/weblog/blob/master/vip_links/git_embeded.md)  
 
 ## knowledge map
-1. [ALGO](https://github.com/derek-yi/weblog/blob/master/alog/algo.md)   
+1. [ALGO](https://github.com/derek-yi/weblog/blob/master/algo/algo.md)   
 2. [ECU](https://github.com/derek-yi/weblog/blob/master/ecu/ecu_top.md)  
 3. [embeded_system](https://github.com/derek-yi/weblog/blob/master/embeded/embeded_sys.md)  
 4. [linux_admin](https://github.com/derek-yi/weblog/blob/master/linux_admin/readme.md)  
