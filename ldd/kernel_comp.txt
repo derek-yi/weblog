@@ -1,0 +1,76 @@
+===========================================
+1、下载内核，并解压
+
+2、make menuconfig生成配置文件
+1）缺省保存为.config
+2）如果不用缺省文件名，make命令？
+3）也可以从已有平台复制config文件
+命令如cp arch/arm/configs/exynos4_defconfig .config
+4）拷贝当前系统的config文件
+cp /boot/config-$(uname -r) .config .config
+
+3、可能需要安装的软件
+sudo apt-get install libncurses5-dev bison flex libssl-dev
+
+4、make编译
+1）多核编译make -j8 
+2）指定config文件？
+
+5、install
+make modules_install //把模块放到/lib/modules文件夹下，并且运行depmod生成模块依赖关系文件
+make install //安装bzimage，Systemmap
+
+手动处理：//待确认
+mkinitramfs /lib/modules/xxx -o /boot/initrd.img-5.0.3-generic
+sudo update-initramfs -c -k 4.17-rc2 //？？
+cp /arch/x86/boot/bzImage    /boot/vmlinuz-5.0.3-generic
+cp  /System.map    /boot/System.map-5.0.3  
+update-grub2 //更新grub.cfg文件
+
+6、clean
+make clean //只清理所有产生的文件
+make mrproper //清理所有产生的文件与config配置文件
+make distclean //清理所有产生的文件与config配置文件，并且编辑过的补丁文件
+===========================================
+各种内核镜像：
+
+vmlinuz是可引导的、可压缩的内核镜像，vm代表Virtual Memory.Linux支持虚拟内存，因此得名vm.它是由用户对内核源码编译得到，实质是elf格式的文件.也就是说，vmlinux是编译出来的最原始的内核文件，未压缩.这种格式的镜像文件多存放在PC机上.
+
+zImage是ARM linux常用的一种压缩镜像文件，它是由vmlinux加上解压代码经gzip压缩而成，命令格式是#make zImage.这种格式的Linux镜像文件多存放在NAND上.
+
+bz表示big zImage,其格式与zImage类似，但采用了不同的压缩算法，注意，bzImage的压缩率更高.
+
+uImage是uboot专用的镜像文件，它是在zImage之前加上一个长度为0x40的头信息(tag)，在头信息内说明了该镜像文件的类型、加载 位置、生成时间、大小等信息.换句话说，若直接从uImage的0x40位置开始执行，则zImage和uImage没有任何区别.命令格式是#make uImage.这种格式的Linux镜像文件多存放在NAND上.
+
+xipImage格式的Linux镜像文件多存放在NorFlash上，且运行时不需要拷贝到内存SDRAM中，可以直接在NorFlash中运行.
+
+
+===========================================
+裁减经验：
+https://blog.csdn.net/hubu01/article/details/1618587
+https://linux.cn/article-2203-1-rel.html
+
+驱动编译到内核
+1）编写driver及其子目录下的Kconfig文件，将驱动的配置项写入menuconfig配置界面；
+2)  执行make menuconfig命令，进入内核配置界面，将对应的驱动程序配置进内核或者模块；
+3）生成.congfig文件，可以看到驱动在内核配置的模式；
+4）执行make 编译内核，生成内核镜像；
+===========================================
+2.4 内核
+01.make menuconfig
+02.make dep
+03.make bzimage
+04.make modules
+05.make modules_install
+06.make install
+
+2.6 内核
+01.make menuconfig
+02.make
+2.6内核 make = make bzImage + make modules
+03.make modules_install
+04.make install
+
+===========================================
+mkinitramfs
+
