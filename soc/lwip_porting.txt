@@ -1,0 +1,31 @@
+## 编译范围,最小功能只需要以下文件
+src\core
+src\core\ipv4
+netif\ethernet.c
+
+## lwip需要用户提供头文件
+#include "arch/cc.h"  //编译器配置
+#include "arch/sys_arch.h" //申明sys_now()即可
+#include "lwipopts.h"  //lwip模块和参数配置
+
+## lwip需要用户提供接口
+u32_t sys_now(void)
+
+## 初始化
+lwip_init
+netif_add  //指定输入和输出函数
+dhcp_start
+netif_set_default
+netif_set_up
+
+## 定时调用
+        lwip_periodic_handle();  //定时和发包处理
+        lwip_pkt_handle(); //收包处理
+
+## lwip编译内存不足的问题：
+1）ram_heap改为动态申请（对源代码的唯一改动）
+2）lwipopts.h中定义MEMP_MEM_MALLOC为1
+3）修过编译优化等级
+
+
+
