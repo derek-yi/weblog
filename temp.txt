@@ -1,2 +1,7 @@
 Zynq-7000系列之linux开发学习笔记
 https://blog.csdn.net/Claudedy/article/details/90757593?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
+
+dev_info()/dev_dbg()/dev_err()
+https://blog.csdn.net/boyemachao/article/details/104801366
+
+
