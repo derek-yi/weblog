@@ -1,3 +1,6 @@
+    #include <stdio.h> 
+    #include <time.h>
+
     struct timespec times = {0, 0};  
     
     clock_gettime(CLOCK_MONOTONIC, &times);  
