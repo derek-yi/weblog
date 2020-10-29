@@ -1,24 +1,4 @@
-Zynq-7000系列之linux开发学习笔记
-https://blog.csdn.net/Claudedy/article/details/90757593?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
 
-dev_info()/dev_dbg()/dev_err()
-https://blog.csdn.net/boyemachao/article/details/104801366
+###
 
 
-3、打印函数调用堆栈信息：
-
-    （1）内核态：直接在指定调用处添加dump_stack();即可打印内核调用堆栈；
-
-    （2）用户态C/C++利用系统调用打印，参考实例如下（注意编译时带-rdynamic把符号带入动态链接标，否则只打印地址无 函数名称）
-
-void mybacktrace()
-{
-    void *buffer[100];
-    char **str=NULL;
-    int i=0;
-    int ptr_num = backtrace(buffer,100);//获取指定最大100个堆栈信息；
-    str = backtrace_symbols(buffer,ptr_num);//转化为字符串
-    if (NULL == str)return;
-    for(i=0p;i<ptr_num;i++)printf("%s\n",str[i]);
-    free(str);
-}
