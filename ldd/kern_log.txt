@@ -1,0 +1,30 @@
+#if 1
+                 
+#define XLOG_BUFF_MAX           512
+#define TALISE_ISR_LOG          "/tmp/talise_isr.xlog"
+ 
+ static int kern_xlog(const char *format, ...)
+ {
+     struct file *log_fd = NULL;
+     va_list args;
+     char buf[XLOG_BUFF_MAX];
+     int len;
+     loff_t f_pos = 0;
+ 
+     va_start(args, format);
+     len = vsnprintf(buf, XLOG_BUFF_MAX, format, args);
+     va_end(args);
+ 
+     log_fd = filp_open(TALISE_ISR_LOG, O_RDWR | O_APPEND | O_CREAT, 0666);
+     if ( IS_ERR(log_fd) )  {
+         //printk("failed to open file %s\n", MY_FILE);
+         return 0;
+     }
+ 
+     //printk("kern_xlog %s\n", buf);
+     kernel_write(log_fd, buf, strlen(buf) + 1,  &f_pos);
+     filp_close(log_fd, NULL);  
+     return len;    
+ }
+                 
+#endif
