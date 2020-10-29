@@ -1,0 +1,65 @@
+https://blog.csdn.net/haibusuanyun/article/details/17199617
+
+tmpfs的用途
+例如：
+Oracle 中的Automatic Memory Management特性就使用了/dev/shm。
+LINUX中可以把一些程序的临时文件放置在tmpfs中，利用tmpfs比硬盘速度快的特点提升系统性能。
+调整tmpfs大小大致有以下三种方法：
+1.直接挂载到需要的目录--比如系统的临时目录-可以根据实际需要挂载某个程序的临时文件的目录
+[root@bys3 ~]# mount -t tmpfs -o size=20m tmpfs /tmp
+[root@bys3 ~]# df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda2              16G   10G  4.7G  69% /
+/dev/sda1              99M   21M   74M  22% /boot
+tmpfs                 502M     0  502M   0% /dev/shm
+tmpfs                  20M     0   20M   0% /tmp
+由于没有挂载之前/tmp目录下的文件也许正在被使用，因此挂载之后系统也许有的程序不能正常工作。可以写入/etc/fstab，这样重启后也有效。
+
+2./etc/fstab文件来修改/dev/shm的容量(增加size=100M选项即可),修改后，重新挂载即可：
+[root@bys3 ~]# cat /etc/fstab
+LABEL=/                 /                       ext3    defaults        1 1
+LABEL=/boot             /boot                   ext3    defaults        1 2
+tmpfs                   /dev/shm                tmpfs   defaults,size=600M        0 0
+tmpfs                   /tmp                tmpfs    defaults,size=25M        0 0
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
+sysfs                   /sys                    sysfs   defaults        0 0
+proc                    /proc                   proc    defaults        0 0
+LABEL=SWAP-sda3         swap                    swap    defaults        0 0
+/dev/sda5               swap                    swap    defaults        0 0
+[root@bys3 ~]# mount -a    --测试/etc/fstab无错误，重启OS系统
+[oracle@bys3 ~]$ df -h    --重启后的信息如下，tmpfs文件系统的对应条目已经改变为配置的
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda2              16G   10G  4.7G  69% /
+/dev/sda1              99M   21M   74M  22% /boot
+tmpfs                 600M     0  600M   0% /dev/shm
+tmpfs                  25M     0   25M   0% /tmp
+
+3./dev/shm建一个tmp目前，并与/tmp绑定。  --这方法有点烦琐，不如方法1方便快捷。
+[root@bys3 ~]# mkdir /dev/shm/tmp
+[root@bys3 ~]# chmod 1777 /dev/shm/tmp
+[root@bys3 ~]# mount --bind /dev/shm/tmp /tmp   -注意mount --bind  这里bind前是两个-
+[root@bys3 ~]# ls -ld /tmp
+drwxrwxrwt 2 root root 40 Dec  8 12:15 /tmp
+[root@bys3 ~]# df -h
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sda2              16G   10G  4.7G  69% /
+/dev/sda1              99M   21M   74M  22% /boot
+tmpfs                 600M     0  600M   0% /dev/shm
+tmpfs                 600M     0  600M   0% /tmp             ----可以看到 /tmp使用到了 /dev/shm的空间。
+
+mount my_tmpfs /home/derek/share/tmpfs -t tmpfs -o size=512m
+
+
+tmp 目录的自动清理
+https://www.chrisyue.com/linux-server-tmp-dir-auto-clean.html
+
+
+从 serverfault.com 上获取的资料，不同的 Linux 发行版其实对 /tmp 目录的清理方式有所不同：
+在 Debian-like 的系统，启动的时候才会清理 (规则定义在 /etc/default/rcS)
+在 RedHat-like 的系统，按文件存在时间定时清理 (RHEL6 规则定义在 /etc/cron.daily/tmpwatch; RHEL7 以及 RedHat-like with systemd 规则定义在 /usr/lib/tmpfiles.d/tmp.conf, 通过 systemd-tmpfiles-clean.service 服务调用)
+在 CentOS 里，也是按文件存在时间清理的 (通过 crontab 的配置 /etc/cron.daily 定时执行 tmpwatch 来实现)
+在 Gentoo 里也是启动清理，规则定义在 /etc/conf.d/bootmisc，大 Gentoo 就是不走寻常路
+对于那些只能开机清理临时文件的发行版，如果作为服务器，这种不重启就对临时文件目录的垃圾不问不管的做事风格实在是很不靠谱。不过从上面其他发行版大家估计也会发现，解决此问题的关键就在于 tmpwatch 和定时任务的配合使用。
+tmpwatch 是专门用于解决“删除 xxx 天没有被访问/修改过的文件”这样需求的命令。使用方式也极其简单：
+tmpwatch 30d /tmp/
+
