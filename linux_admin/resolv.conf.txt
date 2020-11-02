@@ -1,0 +1,20 @@
+yihongliang@facc1:~/nr_rru_g3/linux-adi-fhk$ cat /etc/hosts
+127.0.0.1               localhost       localhost.localdomain
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+
+# the hosts having the static IP in the current LAN
+10.180.8.10             bbu1            bbu1.foxconn.net
+10.180.8.11             bbu2            bbu2.foxconn.net
+
+10.180.8.15             rru1            rru1.foxconn.net
+10.180.8.16             rru2            rru2.foxconn.net
+10.180.8.17             rru3            rru3.foxconn.net
+10.180.8.18             rru4            rru4.foxconn.net
+10.180.8.19             rru5            rru5.foxconn.net
+
+10.180.8.21             facc1           facc1.foxconn.net
+10.180.8.22             facc2           facc2.foxconn.net
+
