@@ -1,0 +1,45 @@
+
+root@analog:~# i2cdetect -l
+i2c-3   i2c             i2c-0-mux (chan_id 2)                   I2C adapter
+i2c-1   i2c             i2c-0-mux (chan_id 0)                   I2C adapter
+i2c-8   i2c             i2c-0-mux (chan_id 7)                   I2C adapter
+i2c-6   i2c             i2c-0-mux (chan_id 5)                   I2C adapter
+i2c-4   i2c             i2c-0-mux (chan_id 3)                   I2C adapter
+i2c-2   i2c             i2c-0-mux (chan_id 1)                   I2C adapter
+i2c-0   i2c             Cadence I2C at e0004000                 I2C adapter
+i2c-7   i2c             i2c-0-mux (chan_id 6)                   I2C adapter
+i2c-5   i2c             i2c-0-mux (chan_id 4)                   I2C adapter
+
+
+## DTS //i2c_mux下面的总线号+1，对应系统的i2c总线号
+i2c_mux
+    i2c@2
+        eeprom@54
+    i2c@3
+        tmp75@48 
+        tmp75@49 
+    i2c@5
+        tmp75@48
+        tmp75@49
+        tmp75@4A
+        tmp75@4C 
+        eeprom@50
+    i2c@6 
+        ina219@40
+        ina219@41 
+
+cat /sys/devices/soc0/amba/e0004000.i2c/i2c-0/i2c-3/3-0054/eeprom  //ok
+cat /sys/devices/soc0/amba/e0004000.i2c/i2c-0/i2c-6/6-0050/eeprom  //ok
+
+//https://github.com/ev3dev/i2c-tools
+
+i2cget -f -y 3 0x54 35  //ok
+
+i2cset -f -y 6 0x50 0 0x40  //ok
+
+i2cget -f -y 6 0x50 0 //ok 
+
+i2cdump -f -y 6 0x50 //ok
+
+i2cdump -f -y 6 0x48
+
