@@ -1,7 +1,7 @@
 ## var/lib/dpkg/available MISSING
-
 sudo touch /var/lib/dpkg/available
 sudo sh -c 'for i in /var/lib/apt/lists/*_Packages; do dpkg --merge-avail "$i"; done'
+
 
 ## proxy
 yihongliang@facc1:~$ cat /etc/apt/apt.conf
@@ -12,12 +12,9 @@ Acquire::http::proxy "http://F1335745:PnC8XSf7@10.191.131.15:3128";
 mount -o loop /dev/sr0 /mnt/iso
 mount -o loop ubuntu-16.04.2-server-amd64.iso /mnt/iso
 
-## nok
-sudo apt-cdrom -m -d=/mnt/iso add
-## nok
-deb file:///mnt dists main restricted
-## ok
-deb file:///mnt xenial main restricted
+sudo apt-cdrom -m -d=/mnt/iso add  //nok
+deb file:///mnt dists main restricted //nok
+deb file:///mnt xenial main restricted  //ok
 
 
 ## deb src
@@ -33,26 +30,10 @@ deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted univer
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
 
 
-deb http://cn.archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse
-d
-deb http://cn.archive.ubuntu.com/ubuntu/ bionic-security main restricted universe multiverse
-d
-deb http://cn.archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse
-d
-deb http://cn.archive.ubuntu.com/ubuntu/ bionic-backports main restricted universe multiverse
-## test
-deb http://cn.archive.ubuntu.com/ubuntu/ bionic-proposed main restricted universe multiverse
-## srcode
-deb-src http://cn.archive.ubuntu.com/ubuntu/ bionic main restricted universe multiverse
-d
-deb-src http://cn.archive.ubuntu.com/ubuntu/ bionic-security main restricted universe multiverse
-d
-deb-src http://cn.archive.ubuntu.com/ubuntu/ bionic-updates main restricted universe multiverse
-d
-deb-src http://cn.archive.ubuntu.com/ubuntu/ bionic-backports main restricted universe multiverse
-
-
+## iso file
 deb file:///mnt/iso bionic main restricted universe multiverse
 deb file:///mnt/iso bionic-security main restricted universe multiverse
 deb file:///mnt/iso bionic-updates main restricted universe multiverse
 deb file:///mnt/iso bionic-backports main restricted universe multiverse
+
+
