@@ -1,3 +1,26 @@
+
+##################################################################################
+## 创建tar文件
+tar -cpvf /PATH/TO/SOMEFILE.tar FILE...
+c表示压缩，x表示解压
+v表示verbose
+p表示显示过程
+
+## 结合压缩算法： -j: bzip2, -z: gzip, -J: xz
+tar Jcvf etc.tar.xz etc
+
+## 追加文件至归档；不支持对压缩文件追加
+ tar -r -f /PATH/SOMEFILE.tar FILE...
+
+## 查看归档文件中的文件列表
+ tar -t -f /PATH/SOMEFILE.tar
+
+## 排除文件
+tar zcvf /date/file.tgz --exclude=/app/host1 --exclude=/app/host2 /app
+
+
+##################################################################################
+
 ## 命令参数
 tar
 -c: 建立压缩档案  
