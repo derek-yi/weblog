@@ -4,6 +4,8 @@
 - [centos_docker](https://github.com/derek-yi/weblog/blob/master/linux_admin/docker_centos.md)  
 - [docker_cmd](https://github.com/derek-yi/weblog/blob/master/linux_admin/docker_cmd.md)  
 - [install_docker](https://github.com/derek-yi/weblog/blob/master/linux_admin/install_docker.md)  
+- [apt help](https://github.com/derek-yi/weblog/blob/master/linux_admin/apt_help.txt)
+- [git help](https://github.com/derek-yi/weblog/blob/master/linux_admin/git_help.txt)
 
 ## handbook  
 - [压缩与解压缩](https://github.com/derek-yi/weblog/blob/master/linux_admin/tar_cmd.md)  
