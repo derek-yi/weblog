@@ -1,0 +1,19 @@
+
+## make
+mkdir /mnt/loop
+dd if=/dev/zero of=ramdisk.image bs=1024 count=10240
+mke2fs -F -v -m 0 ramdisk.image
+sudo mount -o loop ramdisk.image /mnt/loop
+sudo cp -a ./rootfs/* /mnt/loop
+sudo umount loop
+gzip -9 -c ramdisk.image > ramdisk.image.gz
+mkimage -n 'uboot ext2 ramdisk rootfs' -A arm -O linux -T ramdisk -C gzip -d ramdisk.image.gz uramdisk.image.gz
+
+
+## change
+dd if=uramdisk.image.gz of=ramdisk.image.gz skip=1 bs=64
+gzip -d ramdisk.image.gz
+sudo mount -o loop ramdisk.image /mnt/loop
+
+
+
