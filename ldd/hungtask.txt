@@ -1,0 +1,65 @@
+## hangtask
+https://gohalo.me/post/linux-kernel-hang-task-panic-introduce.html
+
+针对这种情况，内核在 3.10.0 版本之后提供了 hung task 机制，用来检测系统中长期处于 D 状体的进程，如果存在，则打印相关警告和进程堆栈。
+
+如果配置了 hung_task_panic ，则会直接发起 panic 操作，然后结合 kdump 可以搜集到相关的 vmcore 文件，用于定位分析。
+
+其基本原理也很简单，系统启动时会创建一个内核线程 khungtaskd，定期遍历系统中的所有进程，检查是否存在处于 D 状态且超过 120s 的进程，如果存在，则打印相关警告和进程堆栈，并根据参数配置决定是否发起 panic 操作。
+
+----- 处于D状态的超时时间，默认是120s
+$ cat /proc/sys/kernel/hung_task_timeout_secs
+
+----- 发现hung task之后是否触发panic操作
+$ cat /proc/sys/kernel/hung_task_panic
+
+----- 每次检查的进程数
+$ cat /proc/sys/kernel/hung_task_check_count
+
+----- 为了防止日志被刷爆，设置最多的打印次数
+$ cat /proc/sys/kernel/hung_task_warnings
+
+hung_task_init()
+ |-atomic_notifier_chain_register() 注册panic通知链，在发生panic时执行相关的操作
+ |-kthread_run() 启动一个内核线程，处理函数为watchdog()，线程名为khungtaskd
+   |-watchdog()
+     |-set_user_nice() 设置为普通优先级，不影响业务运行
+	 |-schedule_timeout_interruptible() 设置内核定时器，默认为120s
+	 |-atomic_xchg() 检测是否需要运行
+	 |-check_hung_uninterruptible_tasks() 真正执行检测
+	   |-check_hung_task()
+
+## panic
+panic，英文意思即崩溃，linux走到崩溃之际，将尽可能把它此时能获取的全部信息都打印出来。
+
+触发原因：
+内核崩溃，错误原因很多，比如页表异常、硬件不可恢复错误、空指针访问等等。
+
+## OOM
+触发原因：
+Linux内核有个机制叫OOM killer（Out-Of-Memory killer），该机制会监控那些占用内存过大，尤其是瞬间很快消耗大量内存的进程，为了防止内存耗尽内核会把该进程杀掉，同时打印信息。
+
+说明：
+1.OOM默认不会挂掉，会尝试kill耗费资源的进程，如果kill后恢复，则系统正常。如果没恢复，会一直kill；
+2.Kill顺序首先根据/proc/PID/oom_score_adj设置优先级去kill，同优先级基本先kill耗费内存最大的进程；
+
+设置进程kill优先级接口
+/proc/PID/oom_score_adj（注意 points越小越不容易被杀）
+
+## softlockup
+“[ 56.032356] NMI watchdog: BUG: soft lockup - CPU#0 stuck for 23s! [cat:153]“
+
+说明：
+softlockup 死锁，主要用于检测内核的进程调度是否正常，当发生softlockup时，内核不能被调度，
+系统在每个cpu上创建一个内核线程，当hrtimer定期执行的回调后会尝试唤醒此线程，如果线程有被正常调度而被唤醒，
+它会更新时间变量watchdog_touch_ts，如果没有则不会更新。在hrtimer的回调函数中会判断watchdog_touch_ts和当前
+时间差，如果超过给定值，那就证明内核调度失败，接着就打印异常log。
+
+接口
+/proc/sys/kernel/nmi_watchdog-------------------------hard lockup开关，
+/proc/sys/kernel/soft_watchdog------------------------soft lockup开关，
+/proc/sys/kernel/watchdog-----------------------------watchdog总开关，
+/proc/sys/kernel/watchdog_cpumask---------------------watchdog cpumaks，
+/proc/sys/kernel/watchdog_thresh----------------------watchdog超时阈值设置
+
+
