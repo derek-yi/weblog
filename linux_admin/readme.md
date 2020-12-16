@@ -1,14 +1,30 @@
 ## handbook  
-- [压缩与解压缩](https://github.com/derek-yi/weblog/blob/master/linux_admin/tar_cmd.md)  
+- [tar&zip](https://github.com/derek-yi/weblog/blob/master/linux_admin/tar_cmd.md)  
+- [ftp&tftp](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_ftp.md)
+- [ps&kill](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_ps.md)
+- [top](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_top.md)
+- [mem&free](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_free.md)
+- [chrt&taskset](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_chrt.md)
+- [vi&vim](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_vim.md)
+- [mount](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_mount.md)
+- [user&group](https://github.com/derek-yi/weblog/blob/master/linux_admin/cmd_user.md)
+- [task_state](https://github.com/derek-yi/weblog/blob/master/linux_admin/task_state.md)
+
+## MISC
 - [md文件简单语法](https://github.com/derek-yi/weblog/blob/master/linux_admin/md_file.md)  
 - [md在线编辑](http://www.mdeditor.com/)
-- [ftp&tftp](https://github.com/derek-yi/weblog/blob/master/linux_admin/ftp.txt)
+- todo  	
 
-## linux_admin
-- [ssh](https://github.com/derek-yi/weblog/blob/master/linux_admin/ssh.txt)
+## proc & sysfs & debugfs ...		
+- todo  
+- todo  	
+
+## server & client
+- [ssh](https://github.com/derek-yi/weblog/blob/master/linux_admin/ssh.md)
 - [scp_cmd](https://github.com/derek-yi/weblog/blob/master/linux_admin/scp_cmd.md)  
+- todo  	
 
-## apt
+## apt&dpkg
 - [aliyun](https://github.com/derek-yi/weblog/blob/master/linux_admin/aliyun.txt)  
 - [apt help](https://github.com/derek-yi/weblog/blob/master/linux_admin/apt_help.txt)
 
