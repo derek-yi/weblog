@@ -1,7 +1,18 @@
-## 文章存档  
-- [汽车电子](https://github.com/derek-yi/weblog/blob/master/soc/auto_elec_wiki.md)  
-- [ecu_list](https://github.com/derek-yi/weblog/blob/master/soc/ecu_list.md)   
+## ARM
+- ARM发展架构
+- cortex-A
 
-## 他山之石
-> todo  
+## RISC-V
+- todo
+- todo
+
+## X86
+- todo
+- todo
+
+## MPIS
+- todo
+- todo
+
+
 
