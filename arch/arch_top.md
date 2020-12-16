@@ -4,7 +4,7 @@
 - [Google Style Guide](https://zh-google-styleguide.readthedocs.io/en/latest/contents/#)  
  
 ## 接口设计  
-- [API design](https://github.com/derek-yi/weblog/blob/master/arch/api_design.md)  
+- [API设计原则](https://github.com/derek-yi/weblog/blob/master/arch/api_design.md)  
 
 ## 代码重构
 - [依赖倒置](https://github.com/derek-yi/weblog/blob/master/arch/arch_dip.md)  
