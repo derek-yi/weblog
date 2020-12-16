@@ -39,8 +39,8 @@ backtrace()函数的返回值为buffer中的条目数量，这个值不一定等
 通过backtrace()函数得到buffer之后，backtrace_symbols()可以将其中的返回地址都对应到具体的函数名，参数size为buffer中的条目数。backtrace_symbols()函数可以将每一个返回值都翻译成“函数名+函数内偏移量+函数返回值”，这样就可以更直观的获得函数的调用关系。  
 经过翻译后的函数回溯信息放到backtrace_symbols()的返回值中，如果失败则返回NULL。需要注意，返回值本身是在backtrace_symbols()函数内部进行malloc的，所以必须在后续显式地free掉。  
 backtrace_symbols_fd()的buffer和size参数和backtrace_symbols()函数相同，只是它翻译后的函数回溯信息不是放到返回值中，而是一行一行的放到文件描述符fd对应的文件中。  
-特别注意：编译需要增加-rdynamic选项
-linux的说明：https://man7.org/linux/man-pages/man3/backtrace.3.html
+特别注意：编译需要增加-rdynamic选项  
+man7.org的说明：https://man7.org/linux/man-pages/man3/backtrace.3.html
   
     
     #include <execinfo.h>
