@@ -16,6 +16,7 @@
 - [安装samba](https://github.com/derek-yi/weblog/blob/master/linux_admin/install_samba.md)   
 
 ## git
+- [廖雪峰git教程](https://www.liaoxuefeng.com/wiki/896043488029600)
 - [git config](https://github.com/derek-yi/weblog/blob/master/linux_admin/git_config.md)
 - [git cmd](https://github.com/derek-yi/weblog/blob/master/linux_admin/git_cmd.md)
 
