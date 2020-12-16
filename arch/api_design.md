@@ -25,7 +25,7 @@
 > [link](https://wiki.qt.io/API_Design_Principles)
   
   
-## 设计原则  
+## API设计原则  
 - 命名
 拼写准确
 动宾结构
