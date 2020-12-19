@@ -1,0 +1,25 @@
+https://blog.csdn.net/thisinnocence/article/details/79517984
+
+#include <stdio.h>
+
+int main()
+{
+    printf("build_sha1:\t%s\nbuild_time:\t%s %s\n",
+           GIT_COMMIT_SHA1, __DATE__, __TIME__);
+    return 0;
+}
+
+## add CFLAGS
+GIT_COMMIT_SHA1 = `git log -n 1 | head -n 1 | cut -d ' ' -f 2`
+# 编译参数: Git commit SHA1
+CFLAGS = -DGIT_COMMIT_SHA1=\"$(GIT_COMMIT_SHA1)\"
+# 编译参数：如优化等级，调试信息，打开所有告警等等
+CFLAGS += -O2 -g -Wall   
+
+## cmake
+execute_process(
+    COMMAND bash "-c" "git log|head -n 1|awk '{printf $2}'"
+    OUTPUT_VARIABLE GIT_COMMIT
+)
+add_definitions(-DGIT_COMMIT_SHA1="${GIT_COMMIT}")
+
