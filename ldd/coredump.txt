@@ -1,0 +1,81 @@
+core dump 分析与实践 //https://www.jianshu.com/p/a5a11567158c
+
+什么是 core dump ?
+进程接收到某些信号（signal）后， 异常终止，并记录当前内存等状态的镜像文件，即 core dump file，简称 core 文件。
+
+这些导致 core 的信号如下:
+信号（signal）	描述
+SIGABRT	异常终止（abort()）
+SIGBUS	硬件异常，通常是错误的内存访问
+SIGEMT	硬件异常
+SIGTRAP	硬件异常。一般是调试异常
+SIGILL	非法指令异常
+SIGIOT	硬件异常，一般对应SIGABRT
+SIGFPE	算术异常，如被0除，浮点溢出等
+SIGILL	非法指令异常
+SIGQUIT	终端退出符
+SIGSEGV	非法内存访问
+SIGSYS	非法系统调用
+SIGXCPU	CPU时间限制超时(setrlimit)
+SIGXFSZ	超过文件长度限制(setrlimit)
+
+core 文件的作用
+   gdb -c [core file] [exec file]
+   gdb [exec file] [core file | pid]
+调试 core 文件，查看程序终止时状态。
+调试 core 文件，学习、测试服务调用流程（自己制作 core）。
+制作 core 的方法：
+$ gcore <pid> # 方法１
+$ gdb -q – <pid>　 ＃方法2
+(gdb) generate-core-file
+(gdb) detach
+(gdb) quit
+
+
+在 OS 上配置 core
+A. 设置生成 core 文件
+（系统默认不生成 core 文件）
+
+## 检查 core 文件大小
+$ ulimit -c # 显示 core 大小，为 0 则不生成 core
+或
+$ ulimit -a # 列出所有资源的限制
+
+## 为所有用户设置生成 core
+$ su - # 获得 root 权限
+# ulimit -S -c unlimited > /dev/null 2>&1
+
+## 或者为单个用户设置core:
+ulimit -c unlimited # unlimited 可以为数字，如1024
+
+
+## 设置进程 ID （pid）为 core 文件扩展名
+修改 /proc/sys/kernel/core_uses_pid 文件内容为: 1
+root@lyg:~# sysctl -w kernel.core_uses_pid=1
+kernel.core_uses_pid = 1
+
+## 设置 core 文件位置和格式
+修改 /proc/sys/kernel/core_pattern 文件
+root@lyg:~# sysctl -w kernel.core_pattern=/tmp/core-%e-%p-%t
+kernel.core_pattern = /tmp/core-%e-%p-%t
+其中，
+/tmp/ ：是存放 core 文件的目录（默认是进程 core 时在的目录）；
+core-%e-%p-%t：是 core 文件格式。
+
+     **%p** - 进程ID（pid）
+     **%u** - 用户ID（uid）
+     **%g** - 用户组ID（gid）
+     **%s** - 导致 core 的信号
+     **%t** - core 的 unix 时间
+     **%h** - 主机名
+     **%e** - 导致 core 的命令名
+
+## 测试产生 core
+$ su - 
+# kill -s SIGSEGV $$
+**或**
+# sleep 10 &
+# killall -SIGSEGV sleep
+# kill -s SEGV <PID>
+ 查看 /tmp/ 目录下是否生成 core 文件。
+ 
