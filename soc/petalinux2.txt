@@ -1,0 +1,35 @@
+
+
+## Petalinux 2018.2 for Xilinx
+https://www.jianshu.com/p/8055097ee834
+
+## 
+sudo apt-get install -y gcc git make net-tools libncurses5-dev tftpd zlib1g-dev libssl-dev flex bison libselinux1 gnupg wget diffstat chrpath socat xterm autoconf libtool tar unzip texinfo zlib1g-dev gcc-multilib build-essential libsdl1.2-dev libglib2.0-dev zlib1g:i386 screen pax gzip
+
+## python version
+1) go into the path "/var/lib/dpkg/", 
+2) then open "status" file in super user mode , right click in empty area > open in terminal, then type
+>sudo gedit status
+3) ctlr +F to search "Pacakge: python", you will find "Pacakge: python2" segment in there.
+4) copy + pasta a whole "Pacakge: python2" segment , and change "python2" --> "python"
+5) save it, re-install petalinux 2018.3
+6) succuss!
+
+## tftp
+#!/bin/bash
+configfile="/etc/default/tftpd-hpa"
+sudo apt install -y tftpd-hpa tftp-hpa
+sudo cp ${configfile} /etc/default/tftpd-hpa.bck
+sudo sed -i '/^TFTP_OPTION/d' ${configfile}
+sudo sed -i '$a TFTP_OPTION=\"--secure --create\"' ${configfile}
+sudo chown -R tftp /var/lib/tftpboot/
+echo "export TFTP_DIRECTORY=\`cat /etc/default/tftpd-hpa | grep TFTP_DIRECTORY | cut -d \"\\\"\" -f 2\`" | sudo tee -a /etc/bash.bashrc >/dev/null
+sudo systemctl enable tftpd-hpa
+sudo systemctl restart tftpd-hpa
+
+
+## dash to bash
+sudo rm /bin/sh
+sudo ln -s /bin/bash /bin/sh
+
+## 
