@@ -1,0 +1,57 @@
+=================================================================================================
+## 下载qemu
+git clone git://github.com/Xilinx/qemu.git
+
+sudo apt install libglib2.0-dev libgcrypt20-dev autoconf automake libtool
+sudo apt-get install gawk openssl libssl-dev libncurses5-dev 
+
+git submodule update --init pixman dtc
+
+## 编译qemu
+./configure --target-list="aarch64-softmmu,microblazeel-softmmu" --enable-fdt --disable-kvm
+make
+
+## 下载image包
+http://www.wiki.xilinx.com/Zynq+2016.2+Release
+tar xf 2016.2-zc706-release.tar.xz
+
+## 启动
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-plnx -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel zc706/uImage -dtb zc706/devicetree.dtb --initrd zc706/uramdisk.image.gz
+
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-plnx -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel zc2020/uImage -dtb zc2020/system.dtb --initrd zc2020/uramdisk.image.gz
+
+//nok, hung up
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel fhk/uImage -dtb fhk/devicetree.dtb --initrd fhk/uramdisk.image.gz
+
+## ok, can boot
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel fhk/uImage -dtb zc2020/system.dtb --initrd zc2020/uramdisk.image.gz
+
+## 退出QEMU
+需要 先按 Ctrl+A，然后按 X。
+=================================================================================================
+## 编译内核和dtb
+
+## 编译adi的kernel
+https://github.com/analogdevicesinc/linux
+export CROSS_COMPILE=arm-linux-gnueabihf-
+export ARCH=arm
+make zynq_xcomm_adv7511_defconfig
+
+## nok, cannot mount rootfs
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel adi/zImage -dtb adi/zynq-zc706.dtb --initrd zc2020/uramdisk.image.gz
+
+## ok, can boot
+./qemu/aarch64-softmmu/qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel adi/zImage -dtb zc2020/system.dtb --initrd zc2020/uramdisk.image.gz
+
+
+=================================================================================================
+
+
+
+
