@@ -1,0 +1,2 @@
+http://cdimage.ubuntu.com/ubuntu-base/releases/18.04/release/
+
