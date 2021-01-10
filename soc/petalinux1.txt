@@ -1,15 +1,13 @@
 ## install petalinux
+sudo apt-get install -y gcc git make net-tools libncurses5-dev tftpd zlib1g-dev libssl-dev flex bison libselinux1 gnupg wget diffstat chrpath socat xterm autoconf libtool tar unzip texinfo zlib1g-dev gcc-multilib build-essential libsdl1.2-dev libglib2.0-dev zlib1g:i386 screen pax gzip gawk
+
 source /opt/petalinux/settings.sh
-
 petalinux-util --webtalk off
-
-yihongliang@facc1:~/xilinx$ echo $PETALINUX
-/opt/petalinux
+echo $PETALINUX
 
 
 ## create project
 petalinux-create -t project -s <path-to-bsp> -n <name>
-
 petalinux-create -t project -s xilinx-zc706-v2018.3-final.bsp -n myp2
 
 Create project from template:
@@ -20,40 +18,28 @@ For zynqMP project,
 
 petalinux-create -t project -n myp2 --template zynq
 
-### 
-If --template option is used instead of a BSP, you can use the petalinux-config command
-to choose default board configs, that are close to your board design, as shown below:
-1. petalinux-config--get-hw-description=<PATH-TO-HDF/DSA-DIRECTORY>
-2. Set CONFIG_SUBSYSTEM_MACHINE_NAME as required.
-a. The possible values are: ac701-full, ac701-lite, kc705-full, kc705-lite, kcu105,
-zc1254-reva, zc1275-reva, zc1275-revb, zc1751-dc1, zc1751-dc2, zc702 zc706,
-avnet-ultra96-rev1, zcu100-reva zcu100-revb, zcu100-revc zcu102-rev1.0,
-zcu102-reva, zcu102-revb, zcu104-reva, zcu104-revc, zcu106-reva, zcu111-reva,
-zedboard.
-b. In petalinux-config DTG Settings ---> (template) MACHINE_NAME, change the
-template to any of the above mentioned possible value.
-
 ## hw-description
 petalinux-config --get-hw-description=../xilinx-zc706-2018.3/project-spec/hw-description/
 
-## uImage
+## make uImage
 petalinux-package --image -c kernel --format uImage
 
-## package
+## make BOOT.BIN
 petalinux-package --boot --fsbl <FSBL image> --fpga <FPGA bitstream> --u-boot
 
 petalinux-package --boot --format BIN --fsbl images/linux/zynq_fsbl.elf --u-boot images/linux/u-boot.elf --fpga images/linux/*.bit
 
+## make prebuilt
 petalinux-package --prebuilt --fpga images/linux/*.bit
 
 ## petalinux-boot
-petalinux-boot --qemu --prebuilt 2
-petalinux-boot --qemu --prebuilt 3
+petalinux-boot --qemu --prebuilt 2   //boot
+petalinux-boot --qemu --prebuilt 3   //kernel
 
 petalinux-boot --qemu --u-boot    // images/linux/u-boot.elf
 petalinux-boot --qemu --kernel    // images/linux/zImage
 
-petalinux-boot --qemu --image ./images/linux/zImage
+petalinux-boot --qemu --image ./images/linux/zImage  //only fit
 
  //NOK, hung up
 petalinux-boot --qemu --image ./fhk/uImage --dtb ./fhk/devicetree.dtb
