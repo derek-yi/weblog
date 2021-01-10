@@ -1,10 +1,5 @@
-
-
 ## Petalinux 2018.2 for Xilinx
 https://www.jianshu.com/p/8055097ee834
-
-## 
-sudo apt-get install -y gcc git make net-tools libncurses5-dev tftpd zlib1g-dev libssl-dev flex bison libselinux1 gnupg wget diffstat chrpath socat xterm autoconf libtool tar unzip texinfo zlib1g-dev gcc-multilib build-essential libsdl1.2-dev libglib2.0-dev zlib1g:i386 screen pax gzip
 
 ## python version
 1) go into the path "/var/lib/dpkg/", 
@@ -32,4 +27,24 @@ sudo systemctl restart tftpd-hpa
 sudo rm /bin/sh
 sudo ln -s /bin/bash /bin/sh
 
-## 
+## sstate
+Petalinux：Yocto Settings设置使用local sstate，加速工程编译
+https://blog.csdn.net/u013029731/article/details/88910490
+
+第三项Add pre-mirror url：可进行设置，
+修改为file://<path>/downloads，<path>为sstate下载包解压后的地址。
+例如：file:///media/ubuntu16.04/petalinux1801/sstate-rel-v2018.2/downloads
+
+第四项Local sstate feeds settings：可进行设置，
+修改为：<path>/aarch64(arm/mb-full)，<path>为sstate下载包解压后的地址。
+例如：/media/ubuntu16.04/petalinux1801/sstate-rel-v2018.2/aarch64
+
+第五项Enable Debug Tweaks：
+这一项如果使能，那么板子启动时，在串口就不需要输入账号、密码。
+
+第六项Enable Network sstate feeds：
+选择不使能。如果使能就会在网上下载资源。
+
+第七项Enable BB NO NETWORK：
+选择不使能。如果使能有些编译会出错，经验之谈。
+
