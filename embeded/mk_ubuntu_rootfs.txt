@@ -102,6 +102,16 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 >> chmod 777 /tmp
 
 
+## systemd系统开机运行rc.local
+https://xugaoxiang.com/2019/12/05/systemd-rc-local-on-boot/
+
+sudo cp /lib/systemd/system/rc-local.service /etc/systemd/system/rc-local.service
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable rc-local
+sudo systemctl start rc-local.service
+sudo systemctl status rc-local.service
 
 
 
