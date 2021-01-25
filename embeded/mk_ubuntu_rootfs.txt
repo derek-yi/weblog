@@ -1,0 +1,107 @@
+https://blog.csdn.net/UbuntuTouch/article/details/83585564
+https://gnu-linux.org/building-ubuntu-rootfs-for-arm.html
+https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-2017-2-Ubuntu-RFS-on-Zynq-timed-out-waiting-for-device/td-p/800863
+https://blog.csdn.net/csdn924618338/article/details/53411435
+
+## download ubuntu-base-18.04.5-base-armhf.tar.gz
+http://cdimage.ubuntu.com/ubuntu-base/releases/18.04.5/release/
+
+## copy qemu-user-static
+$ apt-get install qemu-user-static
+$ cp /usr/bin/qemu-aarch64-static  usr/bin
+$ cp -b /etc/resolv.conf etc/
+
+## change newfs/etc/apt/source.list
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic main restricted
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-updates main restricted
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic universe
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-updates universe
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic multiverse
+deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-updates multiverse
+#deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-backports main restricted universe multiverse
+#deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-security main restricted
+#deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-security universe
+#deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ bionic-security multiverse
+
+## mount
+sudo mount -t proc /proc newfs/proc
+sudo mount -t sysfs /sys newfs/sys
+sudo mount -o bind /dev newfs/dev
+sudo mount -o bind /dev/pts newfs/dev/pts		
+sudo chroot newfs    //cd new world
+
+## apt-get update
+export http_proxy="http://F1335745:PnC8XSf7@10.191.131.15:3128"
+export https_proxy="https://F1335745:PnC8XSf7@10.191.131.15:3128"
+apt-get update
+#x-window:  apt-get install language-pack-en-base sudo ssh net-tools ethtool wireless-tools lxde xfce4-power-manager xinit xorg network-manager iputils-ping rsyslog lightdm-gtk-greeter alsa-utils gnome-mplayer lightdm bash-completion lxtask htop python-gobject-2 python-gtk2 synaptic --no-install-recommends
+apt-get install dialog sudo ssh net-tools rsyslog bash-completion vim git iputils-ping
+
+## add user
+useradd -s '/bin/bash' -m -G adm,sudo yourname
+# echo "Set password for yourname:"
+passwd yourname
+# echo "Set password for root:"
+passwd root
+
+## resolvconf
+echo 'hostname' > /etc/hostname
+apt-get install resolvconf
+dpkg-reconfigure resolvconf
+
+vi /etc/hosts
+127.0.0.1    localhost
+127.0.1.1    ubox
+
+## timezone
+apt-get install tzdata
+dpkg-reconfigure tzdata
+
+## copy lib //optional
+cp -r /opt/out/modules/3.4.5 ~/ubuntu-rootfs/lib/modules
+
+## 创建/etc/init/ttyS0.conf文件
+start on stopped rc or RUNLEVEL=[12345]
+stop on runlevel [!12345]
+respawn
+#exec /sbin/getty -L 115200 ttyS0 vt102
+#exec /sbin/getty -L 115200 ttyPS1 vt102
+
+## 
+ln -s sd.root/lib/systemd/system/getty@.service sd.root/etc/systemd/system/getty.target.wants/getty@ttyPS1.service
+
+## root用户登录
+/etc/securetty
+add ttyPS1
+ 
+## umount
+echo "UNMOUNTING"
+sudo umount newfs/proc
+sudo umount newfs/sys
+sudo umount newfs/dev/pts
+sudo umount newfs/dev
+
+## copy to sdcard
+
+
+## root login ssh
+/etc/ssh/sshd_config
+PermitRootLogin yes
+
+/etc/init.d/ssh restart
+
+W: GPG error: http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic InRelease: Couldn't create temporary file /tmp/apt.conf.v9BsIU for passing config to apt-key
+E: The repository 'http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+W: GPG error: http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic-updates InRelease: Couldn't create temporary file /tmp/apt.conf.B0AMA8 for passing config to apt-key
+E: The repository 'http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic-updates InRelease' is not signed.
+N: Updating from such a repository can't be done securely, and is therefore disabled by default.
+N: See apt-secure(8) manpage for repository creation and user configuration details.
+
+>> chmod 777 /tmp
+
+
+
+
+
