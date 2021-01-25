@@ -1,23 +1,33 @@
-## var/lib/dpkg/available MISSING
+=================================================================================================
+## error: var/lib/dpkg/available MISSING
 sudo touch /var/lib/dpkg/available
 sudo sh -c 'for i in /var/lib/apt/lists/*_Packages; do dpkg --merge-avail "$i"; done'
 
 
-## proxy
+## proxy config
 yihongliang@facc1:~$ cat /etc/apt/apt.conf
 Acquire::http::proxy "http://F1335745:PnC8XSf7@10.191.131.15:3128";
+Acquire::https::proxy "https://F1335745:PnC8XSf7@10.191.131.15:3128";
 
+## global config
+export http_proxy="http://F1335745:PnC8XSf7@10.191.131.15:3128"
+export https_proxy="https://F1335745:PnC8XSf7@10.191.131.15:3128"
 
+=================================================================================================
 ##  ISO apt
 mount -o loop /dev/sr0 /mnt/iso
 mount -o loop ubuntu-16.04.2-server-amd64.iso /mnt/iso
-
-sudo apt-cdrom -m -d=/mnt/iso add  //nok
-deb file:///mnt dists main restricted //nok
 deb file:///mnt xenial main restricted  //ok
 
+deb file:///mnt/iso bionic main restricted universe multiverse
+deb file:///mnt/iso bionic-security main restricted universe multiverse
+deb file:///mnt/iso bionic-updates main restricted universe multiverse
+deb file:///mnt/iso bionic-backports main restricted universe multiverse
 
-## deb src
+
+=================================================================================================
+## deb src //https://developer.aliyun.com/mirror/ubuntu
+//18.04
 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
@@ -29,11 +39,33 @@ deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted univers
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
 
+//20.04
+deb http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted universe multiverse
 
-## iso file
-deb file:///mnt/iso bionic main restricted universe multiverse
-deb file:///mnt/iso bionic-security main restricted universe multiverse
-deb file:///mnt/iso bionic-updates main restricted universe multiverse
-deb file:///mnt/iso bionic-backports main restricted universe multiverse
+=================================================================================================
+1.查询仓库中软件的所有版本
+# apt-cache madison nginx
+apt-cache madison nginx
+     nginx | 1.18.0-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal-updates/main amd64 Packages
+     nginx | 1.18.0-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal-updates/main i386 Packages
+     nginx | 1.17.10-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal/main amd64 Packages
+     nginx | 1.17.10-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal/main i386 Packages
+     nginx | 1.17.10-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal/main Sources
+     nginx | 1.18.0-0ubuntu1 | http://mirrors.aliyun.com/ubuntu focal-updates/main Sources
 
+2.apt-get install <<package name>>=<<version>>
+apt-get -y install nginx=1.18.0-0ubuntu1
 
+3.misc
+apt-cache policy nginx
+apt-cache show nginx
+=================================================================================================

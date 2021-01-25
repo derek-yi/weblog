@@ -7,14 +7,13 @@
 > chmod 777 /home/ray/share
 
 ## 备份并编辑smb.conf
-> sudo cp /etc/samba/smb.conf /etc/samba/smb.conf_backup
-> sudo gedit /etc/samba/smb.conf
+/etc/samba/smb.conf
 
 ### 将下列几行新增到文件的最后面
 > [Share]  
 > comment = Shared Folder   
 > path = /home/ray/share  
-> writable = yes  
+> writeable = yes  
 > browseable = yes  
 
 ###（可选）修改workgroup
