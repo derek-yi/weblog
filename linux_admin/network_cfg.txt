@@ -1,0 +1,49 @@
+1、netplan方式： //暂时不用
+https://developer.aliyun.com/article/744737
+
+2、ifupdown 方式
+apt install ifupdown 
+Created symlink /etc/systemd/system/multi-user.target.wants/networking.service → /lib/systemd/system/networking.service.
+Created symlink /etc/systemd/system/network-online.target.wants/networking.service → /lib/systemd/system/networking.service.
+
+cat /etc/network/interfaces
+//静态ip
+auto eth0
+iface eth0 inet static
+address 10.180.8.125
+gateway 10.180.8.1
+netmask 255.255.255.0
+gateway 10.180.8.1  //not work
+dns-nameservers 10.134.129.135 10.134.248.35   //option
+//or动态ip
+auto eth0
+iface eth0 inet dhcp
+//optional
+auto lo
+iface lo inet loopback
+
+3、resolve
+在 /etc/hosts 手动配置域名解析。其优先级高于 DNS 查询。
+
+如果/etc/resolv.conf是软链接，需要修改对应的工具，否则可以直接修改这个文件
+nameserver 10.134.129.135
+nameserver 10.134.248.35
+
+控制 /etc/resolv.conf 文件的工具大概有这么几个：netconfig, NetworkManager, resolvconf, rdnssd 和 systemd-resolved
+
+root@ubox:~# ls -al /etc/resolv.conf
+lrwxrwxrwx 1 root root 29 Jan 28 08:08 /etc/resolv.conf -> ../run/resolvconf/resolv.conf
+
+防止被改写：
+1、/etc/host.conf  //todo
+add: nameserver Primary_DNS_Server_IP_address
+2、/etc/network/interfaces
+add：dns-nameservers xxx
+3、如果是resolvconf
+/etc/resolvconf/resolv.conf.d/head //refer：https://note.qidong.name/2020/05/resolvconf/
+nameserver 10.134.129.135
+4、如果是systemd-resolved
+systemctl disable --now systemd-resolved.service
+rm /etc/resolv.conf
+或者修改/etc/systemd/resolved.conf的DNS
+DNS=10.134.129.135 10.134.248.35
