@@ -1,0 +1,35 @@
+=================================================================================================
+1, download uboot
+ftp://ftp.denx.de/pub/u-boot/
+
+2, compile uboot
+export ARCH=arm  
+export CROSS_COMPILE=arm-linux-gnueabi-  
+make vexpress_ca9x4_config  
+make 
+
+3, test uboot on qemu
+qemu-system-arm -M vexpress-a9  -serial stdio -kernel u-boot
+
+## supported arch by qemu-system-arm
+derek@ubuntu:$ qemu-system-arm -M help
+Supported machines are:
+versatileab          ARM Versatile/AB (ARM926EJ-S)
+versatilepb          ARM Versatile/PB (ARM926EJ-S)
+vexpress-a15         ARM Versatile Express for Cortex-A15
+vexpress-a9          ARM Versatile Express for Cortex-A9
+virt                 ARM Virtual Machine
+xilinx-zynq-a9       Xilinx Zynq Platform Baseboard for Cortex-A9
+
+=================================================================================================
+//nok, build uboot of zynq
+export ARCH=arm  
+export CROSS_COMPILE=arm-linux-gnueabihf-  
+make zynq_zc706_defconfig  
+make 
+
+//nok, uboot from petalinux
+qemu-system-arm -M vexpress-a9  -serial stdio -kernel images/linux/u-boot.bin 
+qemu-system-arm -M xilinx-zynq-a9 -serial /dev/null -serial mon:stdio -display none -kernel images/linux/u-boot.bin 
+
+=================================================================================================

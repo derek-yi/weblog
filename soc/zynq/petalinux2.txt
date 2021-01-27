@@ -1,3 +1,4 @@
+=================================================================================================
 ## Petalinux 2018.2 for Xilinx
 https://www.jianshu.com/p/8055097ee834
 
@@ -21,7 +22,6 @@ sudo chown -R tftp /var/lib/tftpboot/
 echo "export TFTP_DIRECTORY=\`cat /etc/default/tftpd-hpa | grep TFTP_DIRECTORY | cut -d \"\\\"\" -f 2\`" | sudo tee -a /etc/bash.bashrc >/dev/null
 sudo systemctl enable tftpd-hpa
 sudo systemctl restart tftpd-hpa
-
 
 ## dash to bash
 sudo rm /bin/sh

@@ -1,11 +1,14 @@
+=================================================================================================
 ## install petalinux
-sudo apt-get install -y gcc git make net-tools libncurses5-dev tftpd zlib1g-dev libssl-dev flex bison libselinux1 gnupg wget diffstat chrpath socat xterm autoconf libtool tar unzip texinfo zlib1g-dev gcc-multilib build-essential libsdl1.2-dev libglib2.0-dev zlib1g:i386 screen pax gzip gawk
+sudo apt-get install -y gcc git make net-tools libncurses5-dev tftpd zlib1g-dev libssl-dev \
+flex bison libselinux1 gnupg wget diffstat chrpath socat xterm autoconf libtool tar unzip \
+texinfo zlib1g-dev gcc-multilib build-essential libsdl1.2-dev libglib2.0-dev zlib1g:i386 screen pax gzip gawk
 
 source /opt/petalinux/settings.sh
 petalinux-util --webtalk off
 echo $PETALINUX
 
-
+=================================================================================================
 ## create project
 petalinux-create -t project -s <path-to-bsp> -n <name>
 petalinux-create -t project -s xilinx-zc706-v2018.3-final.bsp -n myp2
@@ -18,20 +21,21 @@ For zynqMP project,
 
 petalinux-create -t project -n myp2 --template zynq
 
-## hw-description
+## 基于模板，需要指定hw-description
 petalinux-config --get-hw-description=../xilinx-zc706-2018.3/project-spec/hw-description/
 
-## make uImage
+=================================================================================================
+## package uImage
 petalinux-package --image -c kernel --format uImage
 
-## make BOOT.BIN
+## package BOOT.BIN
 petalinux-package --boot --fsbl <FSBL image> --fpga <FPGA bitstream> --u-boot
-
 petalinux-package --boot --format BIN --fsbl images/linux/zynq_fsbl.elf --u-boot images/linux/u-boot.elf --fpga images/linux/*.bit
 
-## make prebuilt
+## package prebuilt
 petalinux-package --prebuilt --fpga images/linux/*.bit
 
+=================================================================================================
 ## petalinux-boot
 petalinux-boot --qemu --prebuilt 2   //boot
 petalinux-boot --qemu --prebuilt 3   //kernel
@@ -41,10 +45,10 @@ petalinux-boot --qemu --kernel    // images/linux/zImage
 
 petalinux-boot --qemu --image ./images/linux/zImage  //only fit
 
- //NOK, hung up
+//NOK, hung up
 petalinux-boot --qemu --image ./fhk/uImage --dtb ./fhk/devicetree.dtb
 
-// core dump
+//core dump
 petalinux-boot --qemu --image ./fhk/zImage  // cp fhk/devicetree.dtb fhk/system.dtb
 
 //abort
@@ -55,4 +59,29 @@ qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on  -serial /dev/n
 qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on  -serial /dev/null -serial mon:stdio -display none -kernel ./images/linux/zImage -dtb ./images/linux/system.dtb
 qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on  -serial /dev/null -serial mon:stdio -display none -kernel ./images/linux/uImage -dtb ./images/linux/system.dtb
 
+=================================================================================================
+petalinux-config --get-hw-description=./fpga_file/
 
+petalinux-build -c XXXXX
+XXXX: 
+	bootloader
+    kernel
+	u-boot
+	rootfs
+	device-tree
+	pmufw
+	arm-trusted-firmware
+
+petalinux-build -X XXXX
+XXXXX:
+	build
+	clean
+	cleanall
+	cleansstate
+	distclean
+	install
+	listtasks
+	populate_sysroot
+	package
+	mrproper
+=================================================================================================

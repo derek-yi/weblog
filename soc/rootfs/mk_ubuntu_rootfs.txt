@@ -1,3 +1,4 @@
+=================================================================================================
 https://blog.csdn.net/UbuntuTouch/article/details/83585564
 https://gnu-linux.org/building-ubuntu-rootfs-for-arm.html
 https://forums.xilinx.com/t5/Embedded-Linux/Petalinux-2017-2-Ubuntu-RFS-on-Zynq-timed-out-waiting-for-device/td-p/800863
@@ -30,11 +31,15 @@ sudo mount -o bind /dev newfs/dev
 sudo mount -o bind /dev/pts newfs/dev/pts		
 sudo chroot newfs    //cd new world
 
+=================================================================================================
+
 ## apt-get update
 export http_proxy="http://F1335745:PnC8XSf7@10.191.131.15:3128"
 export https_proxy="https://F1335745:PnC8XSf7@10.191.131.15:3128"
 apt-get update
-#x-window:  apt-get install language-pack-en-base sudo ssh net-tools ethtool wireless-tools lxde xfce4-power-manager xinit xorg network-manager iputils-ping rsyslog lightdm-gtk-greeter alsa-utils gnome-mplayer lightdm bash-completion lxtask htop python-gobject-2 python-gtk2 synaptic --no-install-recommends
+#x-window:  apt-get install language-pack-en-base sudo ssh net-tools ethtool wireless-tools lxde xfce4-power-manager \
+#xinit xorg network-manager iputils-ping rsyslog lightdm-gtk-greeter alsa-utils gnome-mplayer lightdm bash-completion \
+#lxtask htop python-gobject-2 python-gtk2 synaptic --no-install-recommends
 apt-get install dialog sudo ssh net-tools rsyslog bash-completion vim git iputils-ping
 
 ## add user
@@ -44,7 +49,7 @@ passwd yourname
 # echo "Set password for root:"
 passwd root
 
-## resolvconf
+## resolvconf //optional
 echo 'hostname' > /etc/hostname
 apt-get install resolvconf
 dpkg-reconfigure resolvconf
@@ -53,26 +58,25 @@ vi /etc/hosts
 127.0.0.1    localhost
 127.0.1.1    ubox
 
-## timezone
+## timezone //optional
 apt-get install tzdata
 dpkg-reconfigure tzdata
 
-## copy lib //optional
-cp -r /opt/out/modules/3.4.5 ~/ubuntu-rootfs/lib/modules
-
-## 创建/etc/init/ttyS0.conf文件
+## 创建/etc/init/ttyPS0.conf文件
 start on stopped rc or RUNLEVEL=[12345]
 stop on runlevel [!12345]
 respawn
-#exec /sbin/getty -L 115200 ttyS0 vt102
-#exec /sbin/getty -L 115200 ttyPS1 vt102
+exec /sbin/getty -L 115200 ttyPS0 vt102
 
-## 
-ln -s sd.root/lib/systemd/system/getty@.service sd.root/etc/systemd/system/getty.target.wants/getty@ttyPS1.service
+// todo: 更新后多个tty
+ln -s sd.root/lib/systemd/system/getty@.service sd.root/etc/systemd/system/getty.target.wants/getty@ttyPS0.service
 
-## root用户登录
+## 允许root用户登录串口和ssh
 /etc/securetty
 add ttyPS1
+
+/etc/ssh/sshd_config
+PermitRootLogin yes
  
 ## umount
 echo "UNMOUNTING"
@@ -83,12 +87,7 @@ sudo umount newfs/dev
 
 ## copy to sdcard
 
-
-## root login ssh
-/etc/ssh/sshd_config
-PermitRootLogin yes
-
-/etc/init.d/ssh restart
+=================================================================================================
 
 W: GPG error: http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic InRelease: Couldn't create temporary file /tmp/apt.conf.v9BsIU for passing config to apt-key
 E: The repository 'http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports bionic InRelease' is not signed.
@@ -101,7 +100,7 @@ N: See apt-secure(8) manpage for repository creation and user configuration deta
 
 >> chmod 777 /tmp
 
-
+=================================================================================================
 ## systemd系统开机运行rc.local
 https://xugaoxiang.com/2019/12/05/systemd-rc-local-on-boot/
 
@@ -113,5 +112,6 @@ sudo systemctl enable rc-local
 sudo systemctl start rc-local.service
 sudo systemctl status rc-local.service
 
+=================================================================================================
 
 
