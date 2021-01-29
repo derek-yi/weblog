@@ -1,0 +1,9 @@
+
+
+dtc -I dtb -O dts -o bcm2711-510.dts bcm2711-510.dtb
+
+dtc -I dtb -O dts -o bcm2711-origin.dts bcm2711-origin.dtb
+
+
+dtc -I dts -O dtb -o new-510.dtb bcm2711-510.dts 
+

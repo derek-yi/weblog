@@ -1,0 +1,60 @@
+=================================================================================================
+## find ip
+arp -a | findstr b8-27-eb
+arp -a | findstr dc-a6-32
+
+## clean old kernel
+dpkg --get-selections|grep linux
+sudo apt-get purge linux-image-*.*.*-**（*号用你想删除的实际情况改写）
+sudo apt-get purge linux-headers-*.*.*-**（*号用你想删除的实际情况改写）
+
+=================================================================================================
+## get kernel
+GitHub 地址：https://github.com/raspberrypi/linux
+get branch: git clone --depth=1 --branch rpi-5.9.y https://github.com/raspberrypi/linux
+
+## get compiler
+https://releases.linaro.org/components/toolchain/binaries/7.5-2019.12/
+arm64: aarch64-linux-gnu
+arm32: arm-linux-gnueabihf	-		
+
+## or install compiler
+sudo apt install gcc-arm-linux-gnueabihf
+sudo apt install gcc-aarch64-linux-gnu
+
+## install build tools
+apt install git bc bison flex libssl-dev make libc6-dev libncurses5-dev
+
+## compile
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+
+export ARCH=arm 
+export CROSS_COMPILE=arm-linux-gnueabihf-
+
+make bcm2711_defconfig
+make menuconfig
+make    //all
+make zImage  //aarch64, Image, Image.gz
+make dtbs
+
+make modules_install INSTALL_MOD_PATH=/mnt/rootfs //sd rootfs for raspberry 
+make modules_install INSTALL_MOD_PATH=../tmpdir  //temp dir, need copy to sd rootfs
+
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- xxx
+
+## copy file
+cp Image.gz /boot/mykernel.img
+cp arch/arm64/boot/dts/broadcom/*.dtb /boot/firmware
+cp arch/arm64/boot/dts/overlays/*.dtb* /boot/firmware/overlays/
+cp arch/arm64/boot/dts/overlays/README /boot/firmware/overlays/
+
+## /boot/config.txt
+arm_64bit=1 //optional?
+kernel=mykernel.img
+
+## if boot.scr
+change kernel name to mykernel.img
+
+=================================================================================================
+

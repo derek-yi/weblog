@@ -5,6 +5,7 @@ git clone git://github.com/Xilinx/qemu.git
 sudo apt install libglib2.0-dev libgcrypt20-dev autoconf automake libtool gawk openssl libssl-dev libncurses5-dev 
 
 git submodule update --init pixman dtc
+git submodule update --init dtc //sudo apt install libpixman-1-dev
 
 ## 编译qemu
 ./configure --target-list="aarch64-softmmu,microblazeel-softmmu" --enable-fdt --disable-kvm

@@ -78,6 +78,8 @@ sudo umount tmpfs
 ## 系统启动执行
 qemu-system-arm -M vexpress-a9 -m 512M -kernel linux-3.16.45/myImage -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd a9rootfs.ext4
 
+qemu-system-aarch64 -M vexpress-a9 -m 512M -kernel linux-3.16.45/myImage -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -sd a9rootfs.ext4
+
 //nok, refer ramdisk.txt
 qemu-system-arm -M vexpress-a9 -m 512M -kernel linux-3.16.45/myImage -nographic -append "root=/dev/mmcblk0 console=ttyAMA0" -initrd a9rootfs.ext4
 

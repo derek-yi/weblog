@@ -1,0 +1,52 @@
+
+## create project
+petalinux-create -t project -s <path-to-bsp> -n <name>
+petalinux-create -t project -s xilinx-zc706-v2018.3-final.bsp -n myp1
+petalinux-build
+
+=================================================================================================
+## qemu of petalinux
+petalinux-boot --qemu --u-boot 等价于：
+INFO:  qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on   -serial /dev/null -serial mon:stdio -display none -kernel /home/derek/share/workspace/myp1/images/linux/u-boot.elf -gdb tcp::9000 -dtb /home/derek/share/workspace/myp1/images/linux/system.dtb  -net nic,vlan=1 -net user,vlan=1,tftp=/home/derek/share/workspace/myp1/images/linux -net nic -device loader,addr=0xf8000008,data=0xDF0D,data-len=4 -device loader,addr=0xf8000140,data=0x00500801,data-len=4 -device loader,addr=0xf800012c,data=0x1ed044d,data-len=4 -device loader,addr=0xf8000108,data=0x0001e008,data-len=4 -device loader,addr=0xF8000910,data=0xF,data-len=0x4
+
+petalinux-boot --qemu --kernel 等价于：
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on   -serial /dev/null -serial mon:stdio -display none -kernel /home/derek/share/workspace/myp1/build/qemu_image.elf -gdb tcp::9000 -dtb /home/derek/share/workspace/myp1/images/linux/system.dtb  -net nic,vlan=1 -net user,vlan=1,tftp=/home/derek/share/workspace/myp1/images/linux -net nic -device loader,addr=0xf8000008,data=0xDF0D,data-len=4 -device loader,addr=0xf8000140,data=0x00500801,data-len=4 -device loader,addr=0xf800012c,data=0x1ed044d,data-len=4 -device loader,addr=0xf8000108,data=0x0001e008,data-len=4 -device loader,addr=0xF8000910,data=0xF,data-len=0x4
+
+
+## 指定文件
+//ok  //petalinux编译版本
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./images/linux/zImage -dtb ./images/linux/system.dtb 
+
+//nok
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb -sd ./images/linux/rootfs.ext4
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb -sd ./cm1/a9rootfs.ext4
+
+//ok
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb -initrd ./images/linux/rootfs.cpio
+
+
+//ok //new dtb
+dtc -I dtb -O dts -o newzynq.dts system.dtb
+dtc -I dts -O dtb -o newzynq.dtb newzynq.dts
+qemu-system-aarch64 -M arm-generic-fdt-7series -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./images/linux/zImage -dtb ./images/linux/newzynq.dtb 
+
+
+=================================================================================================
+## qemu of public version
+
+//qemu-system-aarch64: Property '.linux' not found
+qemu-system-aarch64 -M xilinx-zynq-a9 -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb 
+qemu-system-aarch64 -M vexpress-a9 -machine linux=on \
+-serial /dev/null -serial mon:stdio -display none -kernel ./cm1/zImage -dtb ./images/linux/system.dtb 
+
+
+
+=================================================================================================

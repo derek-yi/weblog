@@ -1,0 +1,73 @@
+=================================================================================================
+https://zhuanlan.zhihu.com/p/92689086
+rpi4的启动分区使用FAT32文件系统，并采用如下三阶段启动方式：
+
+板载的VideoCore GPU启动固化在rpi4中的ROM，这一阶段非常简单，主要支持读取SD中FAT32文件系统的第二阶段启动程序；
+VideoCore GPU加载并执行启动分区中的bootcode.bin，该文件主要功能是加载并解析同样位于分区中的start4.elf；
+运行start4.elf，读取并解析config.txt配置文件，并加载执行真正的u-boot程序。
+和之前版本的树莓派不同的是，这里的启动elf文件由start.elf变成了start4.elf。
+
+同时，由于u-boot中没有预置rpi4的dts文件（device tree source），因此采用了在u-boot运行时动态传入硬件描述dtb(device tree blob)文件的方式，用于u-boot启动时枚举硬件。
+这里对于rpi来说就是bcm2711-rpi-4-b.dtb文件。
+
+另外，在rpi3上运行过64位u-boot的都知道，如果在config.txt中没有特别指明kernel的位置，那么start.elf（或start4.elf）默认需要并启动的文件是kernel8.img：
+kernel8.img：64位的Raspberry Pi 4和Raspberry Pi 4；
+kernel7l.img：32位的Raspberry Pi 4（使用LPAE）；
+kernel7.img：32位的Raspberry Pi 4、Raspberry Pi 3和Raspberry Pi 2（未使用LPAE）；
+kernel.img：其他版本的树莓派。
+
+=================================================================================================
+## get code
+git clone https://github.com/u-boot/u-boot
+cd u-boot
+
+## compile
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+make distclean
+make rpi_arm64_defconfig //64bit
+make -j2
+
+export CROSS_COMPILE=arm-linux-gnueabihf-
+make distclean
+make rpi_4_32b_defconfig //32bit
+make -j2
+
+=================================================================================================
+## get boot file
+sudo wget https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/bcm2711-rpi-4-b.dtb -o /mnt/bcm2711-rpi-4-b.dtb   //if need?
+sudo wget https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/start4.elf -o /mnt/start4.elf
+sudo wget https://raw.githubusercontent.com/raspberrypi/firmware/master/boot/bootcode.bin -o /mnt/bootcode.bin
+
+## config.txt
+enable_uart=1
+arm_64bit=1 //if 64bit
+
+## uboot fake kernel
+cp u-boot.bin /mnt/kernel8.img
+
+=================================================================================================
+## load kernel：from sd
+mmc rescan
+fatload mmc 0:1 ${loadaddr} <your_uImage_file>
+bootm
+
+## load kernel：from tftp
+usb start
+dhcp  //先确认DHCP已经设置过next-server和filename参数
+bootm
+
+usb start
+setenv serverip <tftp_server_ip>
+setenv ipaddr <a_spare_ip_address>
+tftpboot uImage
+bootm
+
+##  boot.scr, uboot自动执行
+上面的内容可以写进一个文本文件, 然后编译到U-Boot脚本文件中, 以便在启动时自动执行. 用下面的命令来生成脚本:
+arm-none-linux-gnueabi-mkimage -A arm -O linux -T script -C none -d <your_script_text_file> boot.scr
+=================================================================================================
+
+
+=================================================================================================
+

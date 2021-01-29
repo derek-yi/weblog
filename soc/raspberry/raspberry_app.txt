@@ -1,0 +1,146 @@
+=================================================================================================
+在树莓派上安装 OpenMediaVault（OMV）
+https://shumeipai.nxez.com/2020/09/22/getting-started-with-omv-on-a-raspberry-pi.html
+
+wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
+
+wget -O - https://cdn.jsdelivr.net/gh/OpenMediaVault-Plugin-Developers/installScript@master/install | sudo bash
+
+直接在 PC 的浏览器打开 http://<树莓派的IP地址>
+即可看到 OMV 的登录页，默认的用户名为「admin」，密码「openmediavault」。
+=================================================================================================
+/etc/systemd/system/myscript.service
+
+[Unit]
+Description=My service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u main.py
+WorkingDirectory=/home/pi/myscript
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl start myscript.service
+sudo systemctl stop myscript.service
+
+//设置开机时自动运行
+sudo systemctl enable myscript.service  
+=================================================================================================
+https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md
+
+sudo apt install hostapd
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
+
+sudo apt install dnsmasq
+apt install -y netfilter-persistent iptables-persistent
+
+## origin version
+sudo nano /etc/dhcpcd.conf
+interface wlan0
+    static ip_address=192.168.3.1/24
+    nohook wpa_supplicant
+
+## isc-dhcp-server
+xxx
+
+sudo vim /etc/sysctl.d/routed-ap.conf
+# Enable IPv4 routing
+net.ipv4.ip_forward=1
+不推荐修改/etc/sysctl.conf
+
+## add nat
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo netfilter-persistent save    // sudo cat /etc/iptables/rules.v4
+
+## DHCP and DNS services 
+sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+sudo vim /etc/dnsmasq.conf
+# Listening interface
+interface=wlan0 
+# Pool of IP addresses served via DHCP
+dhcp-range=192.168.3.2,192.168.3.20,255.255.255.0,24h 
+# Local wireless DNS domain
+domain=wlan     
+# Alias for this router
+address=/gw.wlan/192.168.3.1
+
+To ensure WiFi radio is not blocked on your Raspberry Pi, execute the following command:
+sudo rfkill unblock wlan
+
+sudo vim /etc/hostapd/hostapd.conf
+country_code=GB
+interface=wlan0
+ssid=raspberry
+hw_mode=g
+channel=7
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=abc123456
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+
+hw_mode 
+a = IEEE 802.11a (5 GHz) (Raspberry Pi 3B+ onwards)
+b = IEEE 802.11b (2.4 GHz)
+g = IEEE 802.11g (2.4 GHz)
+
+channel：https://en.wikipedia.org/wiki/List_of_WLAN_channels
+
+sudo hostapd -d /etc/hostapd/hostapd.conf来观察测试，没有错误可以连接
+
+sudo systemctl start hostapd
+sudo systemctl enable hostapd
+sudo systemctl hostapd status
+
+/etc/default/hostapd
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+=================================================================================================
+sudo apt-get install isc-dhcp-server
+
+sudo vim /etc/default/isc-dhcp-server
+INTERFACESv4=""
+INTERFACESv6=""
+
+
+sudo vim /etc/dhcp/dhcpd.conf
+
+subnet 192.168.99.0 netmask 255.255.255.0 {
+  range 192.168.99.100 192.168.99.254;
+  option domain-name-servers 192.168.99.1;
+  option subnet-mask 255.255.255.0;
+  option broadcast-address 192.168.99.255;
+  option routers 192.168.99.1;
+}
+
+sudo service isc-dhcp-server restart
+
+sudo systemctl enable isc-dhcp-server
+
+sudo service isc-dhcp-server status
+
+=================================================================================================
+sudo vim /etc/systemd/network/static-wlan.network
+[Match]
+Name=wlan0
+[Network]
+Address=192.168.3.1/24
+Gateway=eth0
+DNS=10.134.129.135
+ 
+systemctl enable systemd-networkd
+systemctl start systemd-networkd
+
+## mannual
+sudo ifconfig wlan0 192.168.3.1 netmask 255.255.255.0
+
+
