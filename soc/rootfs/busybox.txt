@@ -1,0 +1,55 @@
+=================================================================================================
+## download code
+https://busybox.net/
+git clone git://busybox.net/busybox.git
+git clone https://gitee.com/mirrors/busyboxsource.git
+
+## compile busybox
+make defconfig
+make CROSS_COMPILE=arm-linux-gnueabi-
+make install CROSS_COMPILE=arm-linux-gnueabi-
+安装完毕后会在busybox文件夹下生成_install文件夹，该文件夹下的程序就是单板执行所须要的命令。
+
+## 准备根文件系统
+1. 创建rootfs文件夹（根文件夹），拷贝busybox命令到根文件夹下
+sudo mkdir rootfs
+sudo cp busybox-1.20.2/_install/* -r rootfs/
+
+2. 从工具链中拷贝执行库到lib文件夹下
+sudo mkdir rootfs/dev
+sudo mkdir rootfs/proc
+sudo mkdir rootfs/sys
+sudo mkdir rootfs/lib
+sudo cp -P /usr/arm-linux-gnueabi/lib/* rootfs/lib/     //optional
+
+3. 创建4个tty端终设备 
+sudo mknod rootfs/dev/tty1 c 4 1
+sudo mknod rootfs/dev/tty2 c 4 2
+sudo mknod rootfs/dev/tty3 c 4 3
+sudo mknod rootfs/dev/tty4 c 4 4
+
+4. rootfs/etc/init.d/rcS
+mkdir -p rootfs/etc/init.d/
+vim rootfs/etc/init.d/rcS
+#!/bin/sh
+mount -t proc none /proc
+mount -t sysfs none /sys
+/sbin/mdev -s
+
+chmod +x rootfs/etc/init.d/rcS
+
+=================================================================================================
+## 制作根文件系统镜像
+1. 生成32M大小的镜像
+dd if=/dev/zero of=rootfs.ext4 bs=1M count=32
+
+2. 格式化成ext3文件系统
+mkfs.ext4 rootfs.ext4
+
+3. 将文件复制到镜像中
+sudo mkdir tmpfs
+sudo mount -o loop rootfs.ext4 tmpfs/ 
+sudo cp -rf rootfs/* tmpfs/
+sudo umount tmpfs
+
+=================================================================================================
