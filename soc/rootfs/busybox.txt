@@ -6,8 +6,8 @@ git clone https://gitee.com/mirrors/busyboxsource.git
 
 ## compile busybox
 make defconfig
-make CROSS_COMPILE=arm-linux-gnueabi-
-make install CROSS_COMPILE=arm-linux-gnueabi-
+make CROSS_COMPILE=arm-linux-gnueabihf-
+make install CROSS_COMPILE=arm-linux-gnueabihf-
 安装完毕后会在busybox文件夹下生成_install文件夹，该文件夹下的程序就是单板执行所须要的命令。
 
 ## 准备根文件系统
@@ -51,5 +51,34 @@ sudo mkdir tmpfs
 sudo mount -o loop rootfs.ext4 tmpfs/ 
 sudo cp -rf rootfs/* tmpfs/
 sudo umount tmpfs
+
+=================================================================================================
+## sudo vim rootfs/etc/init.d/rcS
+mkdir -p /proc
+mkdir -p /tmp
+mkdir -p /sys
+mkdir -p /mnt
+/bin/mount -a
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+mdev -s
+
+## sudo vim rootfs/etc/fstab
+proc /proc proc defaults 0 0
+tmpfs /tmp tmpfs defaults 0 0
+sysfs /sys sysfs defaults 0 0
+tmpfs /dev tmpfs defaults 0 0
+debugfs /sys/kernel/debug debugfs defaults 0 0
+
+## sudo vim rootfs/etc/inittab
+::sysinit:/etc/init.d/rcS
+::respawn:-/bin/sh
+::askfirst:-/bin/sh
+::ctrlaltdel:/bin/umount -a –r
+
+$ cd _install/dev/
+$ sudo mknod console c 5 1
+$ sudo mknod null c 1 3
 
 =================================================================================================

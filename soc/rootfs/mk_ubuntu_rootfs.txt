@@ -108,7 +108,9 @@ sudo cp /lib/systemd/system/rc-local.service /etc/systemd/system/rc-local.servic
 [Install]
 WantedBy=multi-user.target
 
-sudo systemctl enable rc-local
+ubuntu@ubuntu:~$ sudo systemctl enable rc-local
+Created symlink /etc/systemd/system/multi-user.target.wants/rc-local.service → /etc/systemd/system/rc-local.service.
+
 sudo systemctl start rc-local.service
 sudo systemctl status rc-local.service
 
