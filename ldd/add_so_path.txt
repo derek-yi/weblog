@@ -1,0 +1,10 @@
+ (1)在系统中查找这个文件(当然要保证系统中已经有这个.so文件，只是查找路径没有设置正确而已)：
+　　sudo find / -name libjson_linux-gcc-4.6_libmt.so
+　　结果：/home/liu/Desktop/jsoncpp-src-0.5.0/libs/linux-gcc-4.6/libjson_linux-gcc-4.6_libmt.so
+  
+(2)将.so文件路径的目录添加到/etc/ld.so.conf
+ 　　sudo vim /etc/ld.so.conf
+　　文件末尾新添加一行，/home/liu/Desktop/jsoncpp-src-0.5.0/libs/linux-gcc-4.6
+  
+(3)使得修改生效
+　　sudo /sbin/ldconfig
