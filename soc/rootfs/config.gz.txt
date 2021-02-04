@@ -1,0 +1,37 @@
+https://blog.csdn.net/lu_embedded/article/details/108908577
+
+简述
+Linux 可以在内核本身存储用于内核构建的 gzip 内核配置文件副本，并通过 /proc/config.gz 提供给用户。
+也就是说，/proc/config.gz 就是当前的 Linux 内核配置文件，并且是用 gzip 格式压缩过的。
+
+但不是所有的 Linux 发行版都有 /proc/config.gz 文件，大部分常见的 Linux 发行版就没有提供，比如 Ubuntu。
+只有当内核配置 CONFIG_IKCONFIG 和 CONFIG_IKCONFIG_PROC 为 y，才会在 /proc 中出现 config.gz 文件。
+当然，即使大多数发行版没有提供 /proc/config.gz，当仍然可以通过 /boot 查看内核配置信息。
+
+操作
+执行 file /proc/config.gz 查看文件信息：
+/proc/config.gz: gzip compressed data, max compression, from Unix, original size 149025
+可以看到确实是 gzip 压缩文件，我们可以使用 zcat 或 zgrep 工具查看，比如：
+
+zcat /proc/config.gz | grep IKCONFIG    # 显示文件所有内容并查找IKCONFIG配置信息
+zgrep "IKCONFIG" /proc/config.gz        # 显示IKCONFIG配置信息
+zcat 和 zgrep 命令用于不真正解压缩文件，就能显示压缩包中文件的内容的场合。
+
+我们可以看到，当前系统的确配置 IKCONFIG。
+
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+作为对比，我也检查下 Ubuntu 中的配置。
+
+cat /boot/config-$(uname -r) | grep IKCONFIG
+如你所想，并没有配置。
+
+# CONFIG_IKCONFIG is not set
+为了调试方便，我们可以将当前内核配置解压并保存起来。
+
+zcat /proc/config.gz > runninig.config
+与 /boot 中的内核配置文件对比发现，两者完全一致。
+
+diff runninig.config /boot/config-$(uname -r)
+最后，如果配置了 CONFIG_IKCONFIG 但是没有配置 CONFIG_IKCONFIG_PROC 的话，我们可以使用 Linux 为我们提供的 extract-ikconfig 脚本从内核映像文件中提取出配置文件。例如：
+./scripts/extract-ikconfig arch/arm/boot/zImage | tee config_file
