@@ -1,0 +1,28 @@
+介绍一下linux系统中的两个proc文件：/proc/sys/kernel/sched_rt_period_us和/proc/sys/kernel/sched_rt_runtime_us。
+这两个文件规定了，在以sched_rt_period_us为一个周期的时间内，所有实时进程的运行时间之和不超过sched_rt_runtime_us。
+这两个文件的默认值是1s和0.95s，表示每秒种为一个周期，在这个周期中，所有实时进程运行的总时间不超过0.95秒，剩下的至少0.05秒会留给普通进程。
+也就是说，实时进程占有不超过95%的CPU。而在这两个文件出现之前，实时进程的运行时间是没有限制的（就像《linux进程调度浅析》里面描述的那样），
+如果一直有处于TASK_RUNNING状态的实时进程，则普通进程会一直不能得到运行。相当于sched_rt_runtime_us等于sched_rt_period_us。
+
+derek@ubuntu:~/share/raspberry/linux$ cat /proc/sys/kernel/sched_rt_period_us
+1000000
+derek@ubuntu:~/share/raspberry/linux$ cat /proc/sys/kernel/sched_rt_runtime_us
+950000
+
+
+ps -a -Lo pid,tid,pri,ni,policy
+
+
+如果是FIFO实时进程在占用CPU，除非出现以下事情，否则FIFO一条道跑到黑。
+     a）FIFO进程良心发现，调用了系统调用sched_yield 自愿让出CPU
+     b) 更高优先级的进程横空出世，抢占FIFO进程的CPU。有些人觉得很奇怪，怎么FIFO占着CPU，为啥还能有更高优先级的进程出现呢。
+     别忘记，我们是多核多CPU ,如果其他CPU上出现了一个比FIFO优先级高的进程，可能会push到FIFO进程所在的CPU上。
+     c)FIFO进程停止（TASK_STOPPED or TASK_TRACED状态）或者被杀死（EXIT_ZOMBIE or EXIT_DEAD状态）
+    d) FIFO进程执行了阻塞调用并进入睡眠（TASK_INTERRUPTIBLE OR TASK_UNINTERRUPTIBLE）。
+    
+    如果是进程的调度策略是时间片轮转RR，那么，除了前面提到的abcd，RR实时进程耗尽自己的时间片后，自动退到对应优先级实时队列的队尾，重新调度。
+
+
+https://man7.org/linux/man-pages/man7/sched.7.html
+
+
