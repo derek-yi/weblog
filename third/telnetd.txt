@@ -1,0 +1,23 @@
+http://sunyongfeng.com/201810/networks/telnet
+
+linux telnetd 分析
+Linux 发行版本视 telnet 为不安全工具，对 telnet 的支持比较差。
+目前发行版主要使用 inetd (internet “super-server”) + telnetd 的形式，并没有独立的 telnet 服务器。一般只有在嵌入式系统中才有 telnet standalone 服务器。
+telnetd, 源码隶属 netkit-telnet
+xinetd + telnetd
+openbsd-inetd + tcpd + telnetd
+standalone telnetd:
+utelnetd, https://wiki.gentoo.org/wiki/Utelnetd, 代码https://public.pengutronix.de/software/utelnetd/, 用于 optware/gentoo 等。
+busybox telnetd
+优缺点分析：
+inetd + telnetd
+目前各大发行版本支持
+正常情况下，可直接安装使用。目前在 ubuntu 上验证，即装即可用，但是在 debian jessie 上，不可用。下文详细介绍 fix 过程，fix 后 openbsd-inetd (debian 默认 inetd) + telnetd 可用。
+不方便维护，除 telnetd，还需要引进 inetd，多一个故障点
+多一个 inetd，多一个代码维护点
+standalone telnetd
+代码少，以 utelnetd 来讲，空行算进去，总的也才 600 多行。
+相比 inetd + telnetd 方式，部署简单，方便维护。
+busybox 的 telnetd 在整个 busybox 框架下，如果单独剥离出来，需要一定工作量。相比之下，utelnetd 很方便。
+关于 inetd
+网上推荐使用 xinetd，redhat 系用 xinetd 比较多。debian 系支持的比较少，像 update-inetd 就明确安装时就说明不完全支持 xinetd。
